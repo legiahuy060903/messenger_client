@@ -1,0 +1,30 @@
+{
+    "preferences": "Preferences",
+    "home": {
+        "pla_search": "Search (Ctrl + k)"
+    },
+    "setting": {
+        "active_status": "Active status",
+        "notifications": "Notifications",
+        "appearance": "Appearance",
+        "language": "Language",
+        "logout": "Log out",
+        "status": {
+            "on": "On",
+            "off": "Off",
+            "vi": "Vietnamese",
+            "en": "English",
+            "light": "Light",
+            "dark": "Dark"
+        }
+    },
+    "login": {
+        "cap": "Log in to get started",
+        "placeholder_email": "Email or number phone",
+        "placeholder_password": "Password",
+        "validate_email": "Please input your Email!",
+        "validate_password": "Please input your Password!",
+        "button": "Log in",
+        "forgot_pass": "Forgot your password ?"
+    }
+}

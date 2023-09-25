@@ -1,0 +1,30 @@
+{
+    "preferences": "Tùy chọn",
+    "home": {
+        "pla_search": "Tìm kiếm (Ctrl + k)"
+    },
+    "setting": {
+        "active_status": "Trạng thái hoạt động",
+        "notifications": "Thông báo",
+        "appearance": "Giao diện",
+        "language": "Ngôn ngữ",
+        "logout": "Đăng xuất",
+        "status": {
+            "on": "Bật",
+            "off": "Tắt",
+            "vi": "Tiếng việt",
+            "en": "Tiếng Anh",
+            "light": "Sáng",
+            "dark": "Tối"
+        }
+    },
+    "login": {
+        "cap": "Đăng nhập để bắt đầu",
+        "placeholder_email": "Nhập email hoặc số điện thoại",
+        "placeholder_password": "Mật khẩu",
+        "validate_email": "Vui lòng nhập email !",
+        "validate_password": "Vui lòng nhập Password!",
+        "button": "Đăng nhập",
+        "forgot_pass": "Quên mật khẩu ?"
+    }
+}

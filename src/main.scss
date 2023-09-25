@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font: inherit;
+}
+
+img,
+picture,
+svg,
+video {
+    display: block;
+    max-width: 100%;
+}
+
+input,
+select,
+textarea {
+    background-color: transparent;
+    outline: none;
+}
+
+button {
+    cursor: pointer;
+    background-color: transparent;
+    outline: none;
+    border: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1;
+    scroll-behavior: smooth;
+
+}
+
+$black: black;
+$white: white;
+$white_1: rgb(244, 244, 244);
+$white_2: #e5e5e5;
+
+$tim: rgb(170, 0, 255);
+
+
+@mixin light-mode {
+    background: $white;
+    color: $black;
+}
+
+@mixin dark-mode {
+    color: $white;
+    background: $black;
+}
+
+
+
+.light-mode {
+
+    .input_search {
+        background: $white_2;
+    }
+
+    .textarea_chat {
+        background-color: #efefef;
+        color: $black;
+    }
+
+    .sider_area {
+        background: $white_1;
+    }
+
+    .text-mode {
+        @include light-mode;
+    }
+
+    .ant-modal-body {
+        .setting_theme_mode {
+            @include dark-mode;
+        }
+    }
+
+}
+
+.dark-mode {
+    .text-mode {
+        @include dark-mode;
+    }
+
+    .textarea_chat {
+        background: #2e2e2e;
+        color: $white;
+    }
+
+    .ant-modal-body {
+        .setting_theme_mode {
+            @include light-mode;
+
+        }
+    }
+}
+
+.modal-setting {
+    .ant-modal-content {
+        padding: 1rem 0rem 0rem 0rem !important;
+    }
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-end {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.wh-full {
+    width: 100%;
+    height: 100%;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+    border-radius: 10px;
+    background: #555;
+}
+
+.scrollX::-webkit-scrollbar {
+    height: 4px;
+}
+
+.border_bottom_gray_1 {
+    border-bottom: 0.1px solid grey;
+}
+
+.isActiveUser {
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        background: rgb(0, 210, 0);
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        right: 4px;
+        bottom: 0;
+        display: block;
+    }
+}
+
+.bb {
+    border-bottom: 0.001rem solid rgb(43, 43, 43);
+}
+
+.bt {
+    border-top: 0.001rem solid rgb(43, 43, 43);
+}
+
+.br {
+    border-right: 0.001rem solid rgb(43, 43, 43);
+}
+
+.cus_border-1 {
+    border: 0.5px solid rgb(50, 50, 50);
+}
+
+.cus_border-10 {
+    border: 5px solid rgb(50, 50, 50);
+}
+
+.segmented_center {
+    .ant-segmented-item-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.dropdown_custom {
+    .ant-dropdown-menu {
+        margin-bottom: 1rem;
+    }
+
+}
