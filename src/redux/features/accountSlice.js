@@ -24,11 +24,10 @@ export const accountSlice = createSlice({
         },
         doLogoutAction: (state) => {
             localStorage.removeItem('access_token');
-            state.account = null;
-            state.isAuthenticated = false;
+            return initialState;
         },
         changeTheme: (state, action) => {
-            state.dark_mode = action.payload
+            state.dark_mode = action.payload;
         },
         changeLanguage: (state, action) => {
             state.language = action.payload

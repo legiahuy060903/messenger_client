@@ -18,3 +18,16 @@ export const callUpdateAccount = (body) => {
 export const callAllUser = () => {
     return axios.put(`/api/chat`);
 }
+export const callConversations = (params) => {
+    return axios.get(`/api/message/conversations`, { params });
+}
+export const callSearchUser = (name) => {
+    return axios.get(`/api/user/search`, { name });
+}
+
+export const callAddMessage = (body) => {
+    return axios.post(`/api/message`, body);
+}
+export const callMessage = (id, params) => {
+    return axios.get(`/api/message/${id}`, { params });
+}

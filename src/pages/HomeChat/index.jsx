@@ -1,73 +1,101 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Conversation from '../../components/conversation';
 import { Col, Row } from 'antd';
 import { FaEdit } from 'react-icons/fa';
 import { AiOutlineSearch } from 'react-icons/ai';
-import Messenger from '../../components/Mes';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from "react-router-dom";
+import { getConversations } from "../../redux/action/message.js";
+import { callSearchUser } from '../../services/api';
+import { addUserToMessage } from '../../redux/features/messageSlice';
+import DisplayChat from '../../components/ContainerChat';
 const HomeChat = () => {
-    const { account } = useSelector(state => state.account)
-    const [userOnline, setUserOnline] = useState([])
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { user: { account }, message } = useSelector(state => state);
+    const refInputSeacrch = useRef('');
     const { t } = useTranslation("main");
-    // useEffect(() => {
+    const [searchUsers, setSearchUsers] = useState([]);
 
-    // }, [])
+    useEffect(() => {
+        if (message.firstLoad) return;
+        dispatch(getConversations());
+    }, [dispatch, message.firstLoad])
+
+    const handFindUser = async () => {
+        let name = refInputSeacrch.current.value;
+        const data = await callSearchUser(name);
+        setSearchUsers(data)
+        refInputSeacrch.current.value = "";
+    }
+
+    const handFetchUser = (user) => {
+        setSearchUsers([])
+        refInputSeacrch.current.value = "";
+        dispatch(addUserToMessage({ ...user, text: '', media: [] }));
+        // dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online })
+        navigate(`/chat/` + user._id);
+    }
 
     return (
-        <Row className=' h-screen'>
-            <Col xs={5} md={3} lg={5} className='w-full text-mode h-full overflow-hidden flex flex-col'>
-                <Row justify={"space-between"} align={'middle'} className='h-[10%] px-4'>
-                    <Col xs={0} xl={5} className='text-xl font-medium'>Chat</Col>
-                    <Col xs={24} xl={2} className='text-xl font-medium flex lg:justify-end xs:justify-center'><FaEdit size={18} /></Col>
-                </Row>
-                <div className='w-full h-[5%] px-4 relative xs:hidden lg:block'>
-                    <input type="text" placeholder={t("home.pla_search")}
-                        className='w-full h-11 border-none ps-3 text-base  input_search' />
-                    <span className='absolute right-[10%] top-[38%]'><AiOutlineSearch /> </span>
-                </div>
-                <div className='w-full xs:h-[90%] lg:h-[80%]  xs:mt-0 lg:mt-5 overflow-y-auto px-4'>
-                    <div>
-                        <Row className='flex w-full overflow-x-scroll cursor-pointer scrollX' wrap={false} >
-                            <Col xs={0} lg={8} className='user_active'>
-                                <Conversation isActive={true} />
-                            </Col>
-                            <Col xs={0} lg={8} className='user_active'>
-                                <Conversation isActive={true} />
-                            </Col>
-
-
-                        </Row>
-                    </div>
-                    {account && account.friends.map(item => (
-                        <div key={item._id}>
-                            <Conversation dataFriend={item} />
+        <section>
+            <Row>
+                <Col xs={5} md={3} lg={5} className='br'>
+                    <div className='text-mode h-screen overflow-hidden flex flex-col pt-2'>
+                        <div className=' min-h-[60px] px-4 flex lg:justify-between xs:justify-center items-center'>
+                            <div className='xs:hidden lg:block w-1/12  text-xl font-medium'>Chat</div>
+                            <div className='xs:full lg:w-1/12 text-xl h-10  font-medium flex-center'><FaEdit size={18} /></div>
                         </div>
-                    ))}
-                    <div>
+                        <div className='w-full min-h-[60px]  px-4 relative xs:hidden lg:flex justify-center items-center '>
+                            <input type="text" placeholder={t("home.pla_search")} ref={refInputSeacrch}
+                                className=' w-full h-[70%] border-none ps-3 text-base input_search' />
+                            <span className='absolute right-[10%] top-[38%]'><AiOutlineSearch onClick={handFindUser} /> </span>
+                        </div>
+                        <div className='lg:my-3 xs:mt-0  cursor-pointer'>
+                            <div className='overflow-hidden px-4'>
+                                <Row className=' w-full overflow-x-scroll  scrollX' wrap={false} justify="start" >
+                                    <Col xs={0} lg={8} xl={6} className='user_active'>
+                                        <Conversation isActive={true} />
+                                    </Col>
+                                    <Col xs={0} lg={8} xl={6} className='user_active'>
+                                        <Conversation isActive={true} />
+                                    </Col>
+                                    <Col xs={0} lg={8} xl={6} className='user_active'>
+                                        <Conversation isActive={true} />
+                                    </Col>
 
-                        {/* <Conversation />
-                        <Conversation />
-                        <Conversation />
-                        <Conversation />
-                        <Conversation />
-                        <Conversation />
-                        <Conversation />
-                        <Conversation />
-                        <Conversation />
-                        <Conversation />
-                        <Conversation />
-                        <Conversation /> */}
+                                </Row>
+                            </div>
+                            {
+                                searchUsers.length !== 0 ?
+                                    searchUsers?.map(item => (
+                                        <div key={item._id} className={`${item._id == id && 'activeConversation'}`} onClick={() => handFetchUser(item)}>
+                                            <Conversation dataFriend={item} row={true} />
+                                        </div>
+                                    )) :
+                                    <>
+                                        {message.users && message.users.map(item => {
+                                            return (
+                                                <div key={item?._id} className={`${item?._id == id && 'activeConversation'}`} onClick={() => handFetchUser(item)}>
+                                                    <Conversation dataFriend={item} row={true} />
+                                                </div>
+                                            )
+                                        })}
+                                    </>
+                            }
+                        </div>
                     </div>
 
+                </Col>
 
-                </div>
-            </Col>
+                <Col xs={19} md={21} lg={19} >
+                    <DisplayChat id={id} />
+                </Col>
+            </Row>
+        </section>
 
-            <Col xs={19} md={21} lg={19}>
-                <Messenger />
-            </Col>
-        </Row>
     )
 }
 

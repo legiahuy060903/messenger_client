@@ -1,19 +1,22 @@
 import { Select, Switch } from 'antd';
-import React, { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeLanguage } from '../../redux/features/accountSlice';
 import { useTranslation } from 'react-i18next';
+
 const Language = () => {
     const dispatch = useDispatch();
     const { t } = useTranslation("main");
-    const lang = useSelector(s => s.account.language);
+    const lang = useSelector(s => s.user.language);
     const [status, setStatus] = useState(false);
+
     const onChangeCheck = (checked) => {
         setStatus(checked)
     };
     const handleChangeLanguage = (value) => {
         dispatch(changeLanguage(value))
     };
+
     return (
         <div className='flex flex-col gap-y-4'>
             <span className='text-xl'>{t("setting.language")}</span>

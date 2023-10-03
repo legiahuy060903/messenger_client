@@ -17,6 +17,8 @@ import useOnClickOutside from '../../hook/useOnClickOutside';
 import { useTranslation } from 'react-i18next';
 import { callLogout } from '../../services/api';
 import { doLogoutAction } from '../../redux/features/accountSlice';
+import { useNavigate } from "react-router-dom";
+import { resetMessages } from '../../redux/features/messageSlice';
 
 function getItem(label, key, icon, children) {
     return {
@@ -35,13 +37,13 @@ const items = [
 
 
 const Sidebar = () => {
+    const navigate = useNavigate();
     const { t } = useTranslation("main");
-    const refModalSeting = useRef();
     const [showSetting, setShowSetting] = useState(false);
     const [showModalSetting, setShowModalSetting] = useState(false);
     const [settingChoose, setSettingChoose] = useState();
     const dispatch = useDispatch();
-    const { dark_mode } = useSelector(state => state.account);
+    const { dark_mode } = useSelector(state => state.user);
     const [messageApi, contextHolder] = message.useMessage();
 
     const status = {
@@ -80,7 +82,7 @@ const Sidebar = () => {
             label: (
                 <span className='lg:flex flex-col justify-center xs:hidden gap-y-1 text-mode'>
                     <h2 className='text-sm font-medium'>{t("setting.appearance")}</h2>
-                    <h6 className='text-xs'>{status.dark}</h6>
+                    <h6 className='text-xs'>{status[dark_mode]}</h6>
                 </span>
             ),
             icon: <span className='flex-center h-10 w-10  rounded-full setting_theme_mode' > <MdDarkMode className='icon ' size={20} /> </span>,
@@ -117,17 +119,15 @@ const Sidebar = () => {
         if (key == 4) {
             await callLogout();
             dispatch(doLogoutAction());
-            messageApi.open({
-                type: 'success',
-                content: 'This is a success message',
-            });
+            dispatch(resetMessages())
+            navigate("/");
         }
     }
 
     return (
-        <div className='sider_area flex flex-col justify-between items-center'>
+        <div className='sider_area flex flex-col justify-between items-center mode-sider'>
             {contextHolder}
-            <Sider collapsed={true} className='mt-2' collapsedWidth={60}>
+            <Sider collapsed={true} className='mt-2 ' collapsedWidth={65}>
                 <Menu defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>
             <span className='mb-4 relative' onClick={() => setShowSetting(!showSetting)}>

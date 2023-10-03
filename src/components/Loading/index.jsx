@@ -11,7 +11,7 @@ const antIcon = (
 );
 const Spinner = () => {
     return (
-        <Layout className='h-screen flex-center'>
+        <Layout className='h-screen  flex-center'>
             <Spin indicator={antIcon} />
         </Layout>
     )

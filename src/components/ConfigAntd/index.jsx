@@ -6,13 +6,14 @@ import { useSelector } from 'react-redux';
 const black = 'black';
 const light = 'white';
 const white_1 = 'rgb(244, 244, 244)';
+const black_1 = 'rgb(40, 40, 40)';
 const ThemeApp = {
     'dark': {
         'bg': black,
         'color': light,
         'algorithm': theme.darkAlgorithm,
         'menu': {
-            'bg': black,
+            'bg': black_1,
             'controlItemBgActive': '#565656',
             'itemColor': light,
             'colorPrimary': light,
@@ -39,7 +40,7 @@ const ThemeApp = {
     },
 }
 const ConfigProviderAnt = ({ children }) => {
-    const { dark_mode } = useSelector(state => state.account);
+    const { dark_mode } = useSelector(state => state.user);
     return (
         <ConfigProvider
             theme={{
@@ -73,7 +74,7 @@ const ConfigProviderAnt = ({ children }) => {
                         colorPrimary: "gray"
                     },
                     Menu: {
-                        darkItemSelectedBg: "grey",
+                        darkItemSelectedBg: "gray",
                         itemPaddingInline: "30px",
                         colorBgContainer: ThemeApp[dark_mode]['menu'].bg,
                         colorPrimary: ThemeApp[dark_mode]['colorPrimary'],

@@ -5,18 +5,27 @@ import storage from "redux-persist/lib/storage";
 import {
     persistStore,
     persistReducer,
-    PERSIST
+    FLUSH,
+    REHYDRATE,
+    PAUSE,
+    PERSIST,
+    PURGE,
+    REGISTER,
 } from 'redux-persist'
+import messageSlice from './features/messageSlice';
+
 
 
 const reducers = combineReducers({
-    account: accountSlice
+    user: accountSlice,
+    message: messageSlice
 });
 
 const persistConfig = {
-    key: "key",
+    key: "user",
     root: "root",
     storage,
+    blacklist: ['message']
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
@@ -26,7 +35,7 @@ const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
-                ignoredActions: [PERSIST]
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
             }
         }),
 });

@@ -64,15 +64,12 @@
         visibility: visible;
     }
 
-    .message_text {
-        min-height: 30px;
-        line-height: 1.2rem;
+    .mes_box_text {
+        line-height: 1.2;
         font-size: 1rem;
         font-weight: 500;
-        padding: 0.6rem 1.2rem;
-        color: aliceblue;
-        background: rgb(77, 77, 77);
-        border-radius: 1.5rem;
+        padding: 0.3rem 1rem 0.5rem 1rem;
+        border-radius: 15px;
         word-break: normal;
         overflow-wrap: break-word;
     }

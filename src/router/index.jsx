@@ -1,4 +1,4 @@
-import { useRoutes } from "react-router-dom";
+import { useNavigate, useRoutes } from "react-router-dom";
 import MainLayout from "../Layout/MainLayout";
 import NotFound from "../components/NotFound";
 import HomeChat from "../pages/HomeChat";
@@ -8,21 +8,26 @@ import { fetchAccount } from "../redux/action/user";
 import Spinner from "../components/Loading";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-
 export default function useRouteElements() {
-
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const account = useSelector((state) => state.account);
-    const { i18n } = useTranslation()
+    const { language, account, isAuthenticated } = useSelector((state) => state.user);
+    const { i18n } = useTranslation();
     useEffect(() => {
-        i18n.changeLanguage(account.language);
-    }, [account.language])
+        i18n.changeLanguage(language);
+    }, [language])
 
     useEffect(() => {
         if (window.location.pathname !== "/login") {
             dispatch(fetchAccount());
         }
-    }, [dispatch]);
+    }, []);
+    useEffect(() => {
+        if (account == null || !isAuthenticated) {
+            navigate('/login');
+        }
+    }, [account]);
+
 
     if (account && account.loading) {
         return <Spinner />;
@@ -34,7 +39,8 @@ export default function useRouteElements() {
             element: <MainLayout />,
             errorElement: <NotFound />,
             children: [
-                { index: true, element: <HomeChat /> }
+                { index: true, element: <HomeChat /> },
+                { path: '/chat/:id', element: <HomeChat /> }
             ],
         },
         {

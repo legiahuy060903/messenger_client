@@ -49,7 +49,7 @@ $black: black;
 $white: white;
 $white_1: rgb(244, 244, 244);
 $white_2: #e5e5e5;
-
+$blue_1: rgb(37 99 235 / 1);
 $tim: rgb(170, 0, 255);
 
 
@@ -63,9 +63,21 @@ $tim: rgb(170, 0, 255);
     background: $black;
 }
 
-
+.sider_area {
+    .ant-menu-vertical {
+        border-inline-end: 0px !important;
+    }
+}
 
 .light-mode {
+    .activeConversation {
+        background: #888;
+    }
+
+    .text_message {
+        background: blue_1;
+        color: white;
+    }
 
     .input_search {
         background: $white_2;
@@ -90,9 +102,44 @@ $tim: rgb(170, 0, 255);
         }
     }
 
+    .drawer_setting_chat {
+        .text {
+            color: $black;
+        }
+
+        .icon_mode {
+            background: rgb(185, 185, 185);
+            color: $black;
+        }
+    }
 }
 
 .dark-mode {
+    .text_message_send {
+        background: $blue_1;
+        color: white;
+        text-align: end;
+    }
+
+    .text_message_recipient {
+        background: #888;
+        color: white;
+    }
+
+    .sider_area {
+        background: rgb(40, 40, 40);
+    }
+
+    .activeConversation {
+        transition: all 0.5s;
+        background: #202020;
+    }
+
+    .input_search {
+        background: rgb(39, 39, 42, 1);
+        color: $white;
+    }
+
     .text-mode {
         @include dark-mode;
     }
@@ -106,6 +153,17 @@ $tim: rgb(170, 0, 255);
         .setting_theme_mode {
             @include light-mode;
 
+        }
+    }
+
+    .drawer_setting_chat {
+        .text {
+            color: $white;
+        }
+
+        .icon_mode {
+            background: rgb(189, 187, 187);
+            color: $white;
         }
     }
 }

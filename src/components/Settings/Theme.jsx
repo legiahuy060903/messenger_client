@@ -9,8 +9,7 @@ import { updateTheme } from '../../redux/action/user';
 const Theme = () => {
     const { t } = useTranslation("main");
     const dispatch = useDispatch();
-    const { _id } = useSelector(s => s.account.account)
-    const { dark_mode } = useSelector(state => state.account);
+    const { dark_mode, account: { _id } } = useSelector(state => state.user);
 
     const handleChange = (value) => {
         dispatch(updateTheme({ dark_mode: value, _id }));
