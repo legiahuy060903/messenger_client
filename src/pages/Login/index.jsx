@@ -5,7 +5,7 @@ import { callLogin } from '../../services/api';
 import { useDispatch } from 'react-redux';
 import { doLoginAction } from '../../redux/features/accountSlice';
 import { useNavigate } from 'react-router-dom';
-const pic = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Facebook_Messenger_logo_2020.svg/640px-Facebook_Messenger_logo_2020.svg.png';
+import { pic } from '../../utils/format';
 
 const Login = () => {
     const [messageApi, contextHolder] = message.useMessage()

@@ -51,7 +51,7 @@ $white_1: rgb(244, 244, 244);
 $white_2: #e5e5e5;
 $blue_1: rgb(37 99 235 / 1);
 $tim: rgb(170, 0, 255);
-
+$xam : #565656;
 
 @mixin light-mode {
     background: $white;
@@ -70,8 +70,19 @@ $tim: rgb(170, 0, 255);
 }
 
 .light-mode {
+    .call_accept {
+        background: gray;
+        color: $white;
+
+        .icon {
+            background: grey;
+            color: #eee;
+        }
+    }
+
     .activeConversation {
-        background: #888;
+        transition: all 0.5s;
+        background: #eee;
     }
 
     .text_message {
@@ -115,6 +126,37 @@ $tim: rgb(170, 0, 255);
 }
 
 .dark-mode {
+    .call_area {
+        background: #353535;
+        color: $white;
+        padding: 0.75rem;
+        border-radius: 1rem;
+        display: flex;
+        gap: 0.7rem;
+
+        .icon_accept {
+            background: $xam;
+            color: #eee;
+            padding: 0.4rem;
+            border-radius: 50%;
+        }
+
+        .icon_reject {
+            background: #f84040;
+            color: #eee;
+            padding: 0.4rem;
+            border-radius: 50%;
+        }
+
+        .info_call {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.3rem;
+        }
+
+    }
+
     .text_message_send {
         background: $blue_1;
         color: white;
@@ -132,7 +174,11 @@ $tim: rgb(170, 0, 255);
 
     .activeConversation {
         transition: all 0.5s;
-        background: #202020;
+        background: #131313;
+    }
+
+    .text_cover {
+        color: #616161;
     }
 
     .input_search {
@@ -172,6 +218,10 @@ $tim: rgb(170, 0, 255);
     .ant-modal-content {
         padding: 1rem 0rem 0rem 0rem !important;
     }
+}
+
+.transform-center {
+    transform: translate(-50%, -50%);
 }
 
 .flex-center {
@@ -237,6 +287,12 @@ $tim: rgb(170, 0, 255);
     }
 }
 
+.modal_call {
+    border: 0.1px solid transparent;
+    border-radius: 5px;
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
 .bb {
     border-bottom: 0.001rem solid rgb(43, 43, 43);
 }
@@ -270,4 +326,41 @@ $tim: rgb(170, 0, 255);
         margin-bottom: 1rem;
     }
 
+}
+
+.loading_dot {
+    width: 100%;
+    height: 20px;
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    z-index: 999;
+
+    .AnimatedDot {
+        border: 3px solid #fff;
+        border-radius: 50%;
+        margin: 3px;
+        animation: loading .6s ease-in-out alternate infinite;
+
+        &:nth-child(1) {
+            animation-delay: .6s;
+        }
+
+        &:nth-child(2) {
+            animation-delay: .3s;
+        }
+    }
+}
+
+
+
+@keyframes loading {
+    0% {
+        transform: scale(.75);
+    }
+
+    100% {
+        transform: scale(1.75);
+    }
 }

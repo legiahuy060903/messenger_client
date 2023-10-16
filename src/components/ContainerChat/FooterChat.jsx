@@ -8,24 +8,23 @@ import { BsFillPlusCircleFill, BsFillEmojiSmileFill, BsFillMicFill } from 'react
 import { IoSend } from 'react-icons/io5';
 import { BiSolidLike } from 'react-icons/bi';
 import { MdAttachFile } from 'react-icons/md';
-import { RiFile4Fill } from 'react-icons/ri';
+import { AiOutlineCloseCircle } from 'react-icons/ai';
 import useOnClickOutside from '../../hook/useOnClickOutside';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMessage } from '../../redux/action/message';
-var accept = ".jpg,.jpeg,.png,.json,.video,.text,.pdf,.xlsx,.doc";
+import { imageUpload } from '../../utils/upload';
+var accept = ".jpg,.jpeg,.png,.video";
 
 
 
-const handleHeightInput = (e) => {
-    const scrollHeight = e.target.scrollHeight;
-    e.target.style.height = '100%';
-    e.target.style.height = scrollHeight > 110 ? '110px' : e.target.scrollHeight + 'px';
-}
-const FooterChat = ({ id, account }) => {
+
+const FooterChat = ({ id, account, setLoading, scrollBottom }) => {
     const dispatch = useDispatch();
-    const [text, setText] = useState('')
+    const [text, setText] = useState('');
+    const [media, setMedia] = useState([])
     const refModalEmoji = useRef();
     const refFile = useRef();
+    const textareaRef = useRef(null);
     const [showEmoji, setShowEmoji] = useState(false);
     useOnClickOutside(refModalEmoji, () => togglePopup(false))
     const clickFile = () => {
@@ -34,52 +33,81 @@ const FooterChat = ({ id, account }) => {
 
     useEffect(() => {
         setText("")
+        setMedia([])
     }, [id])
-    const handMessage = useCallback((e, type) => {
-        handleHeightInput(e);
-        setText(e.target.value)
-    }, [])
+
     const togglePopup = (params) => {
         setShowEmoji(params)
     }
-    const handleFileUpload = (file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const fileData = reader.result;
-            const fileType = fileData.split(',')[0].split(':')[1].split(';')[0];
-
-            if (fileType.startsWith('image')) {
-                console.log('Đây là một tệp hình ảnh.');
-                // Thực hiện xử lý cho tệp hình ảnh ở đây
-            } else {
-                console.log('Đây là một tệp khác.');
-                // Thực hiện xử lý cho tệp khác ở đây
-            }
-        };
-        reader.readAsDataURL(file);
-    };
     const handleFileChange = () => {
-        const selectedFile = refFile.current.files[0];
-        if (selectedFile) {
-            handleFileUpload(selectedFile)
-        }
+        const selectedFiles = refFile.current.files;
+        const selectedFilesArray = Array.from(selectedFiles);
+        let newMedia = [];
+        selectedFilesArray.forEach(file => {
+            console.log(file);
+            newMedia.push(file);
+        });
+        setMedia([...media, ...newMedia]);
     };
-    const sendMessage = () => {
+
+
+    const sendMessage = async () => {
         if (id) {
+            scrollBottom()
             let newArr = [];
-            // if (media.length > 0) newArr = await imageUpload(media)
+            if (media.length > 0) {
+                setLoading(true);
+                newArr = await imageUpload(media)
+            }
             const msg = {
                 sender: account._id,
                 recipient: id,
                 text,
                 media: newArr
             }
-            dispatch(addMessage({ data: msg, method: "send" }))
+            dispatch(addMessage({ data: msg, method: "send" }));
+            handleHeightInput(37)
             setText('');
+            setMedia([])
+            media.length > 0 && setLoading(false)
         }
     }
+    const handleDeleteMedia = (index) => {
+        const newArr = [...media]
+        newArr.splice(index, 1)
+        setMedia(newArr)
+    }
+    const handMessage = (e) => {
+        handleHeightInput();
+        setText(e.target.value);
+    };
+    const submitChat = (e) => {
+        if (e.key === "Enter" && text.length > 0 && id && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    }
+    const handleHeightInput = (reset) => {
+        const scrollHeight = textareaRef.current.scrollHeight;
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = scrollHeight > 90 ? '90px' : reset || textareaRef.current.scrollHeight + 'px';
+    }
     return (
-        <>
+        <div className='h-full'>
+            <div className={media.length > 0 ? "flex pt-2 ps-16 gap-2" : "hidden"} >
+                {
+                    media.map((item, index) => (
+                        <div key={index} className="relative">
+                            {
+                                item.type.match(/video/i)
+                                    ? <video controls src={URL.createObjectURL(item)} className='w-[70px] h-[70px] object-contain aspect-[4/3]' />
+                                    : <img src={URL.createObjectURL(item)} className='w-[70px] h-[70px] object-cover rounded-md' />
+                            }
+                            <span className='absolute top-1 right-1 text-red-500' onClick={() => handleDeleteMedia(index)} ><AiOutlineCloseCircle size={15} /></span>
+                        </div>
+                    ))
+                }
+            </div>
             <div className='flex justify-between items-end'>
                 <div className='flex-center mb-4 w-16'>
                     <Dropdown
@@ -89,14 +117,16 @@ const FooterChat = ({ id, account }) => {
                             items: [
                                 {
                                     key: '1',
-                                    label: <div className='flex items-center gap-2'><BsFillMicFill /> <input className='border-0' placeholder='Mic thu âm' /></div>
+                                    label: <div className='flex items-center gap-2'><BsFillMicFill />
+                                        <input className='border-0 ' placeholder='Mic thu âm' />
+                                    </div>
                                 },
                                 {
                                     key: '2',
-                                    label: <div className='flex items-center gap-2'>
+                                    label: <div className='flex items-center gap-2' onClick={clickFile}>
                                         <MdAttachFile />
-                                        <div onClick={clickFile}>Thêm file đính kèm</div>
-                                        <input className='hidden' type='file' accept={accept} ref={refFile} onChange={handleFileChange} max={1} />
+                                        <div className='text-[#888]'>Thêm file đính kèm</div>
+                                        <input className='hidden' type='file' accept={accept} ref={refFile} onChange={handleFileChange} max={7} multiple />
                                     </div>
                                 }
                             ]
@@ -107,24 +137,22 @@ const FooterChat = ({ id, account }) => {
                     </Dropdown>
                 </div>
                 <div className='chatbox flex-grow'>
-                    <div>
-
-                    </div>
                     <textarea
+                        ref={textareaRef}
                         placeholder='Nhập tin nhắn'
                         className='chatbox__input textarea_chat'
                         rows={1}
-                        onChange={(e) => handMessage(e, 'text')}
+                        onChange={handMessage}
+                        onKeyDown={submitChat}
                         value={text}
                     />
                     <span className='chatbox__button '>
-                        <RiFile4Fill className='text-blue-600' size={20} />
                         <BsFillEmojiSmileFill className='text-blue-600' size={17} onClick={() => togglePopup(true)} />
                     </span>
                 </div>
                 <div className='flex-center mb-4 w-16'>
                     {
-                        text.length > 0 ?
+                        text.length > 0 || media.length > 0 ?
                             <IoSend className='text-blue-600' size={20} onClick={sendMessage} />
                             :
                             <BiSolidLike className='text-blue-600' size={20} />
@@ -134,7 +162,7 @@ const FooterChat = ({ id, account }) => {
             <div className={`${showEmoji ? 'block' : 'hidden'} absolute right-[8%] bottom-[100%] `} ref={refModalEmoji} >
                 <Picker data={DataEmoji} onEmojiSelect={(e) => setText(pre => pre + e.native)} />
             </div>
-        </>
+        </div>
 
     )
 }

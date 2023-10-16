@@ -8,7 +8,6 @@ const instance = axios.create({
 });
 const handleRefreshToken = async () => {
     const res = await instance.get('/api/user/refreshtoken');
-    console.log(res)
     return res ? res : null
 };
 instance.interceptors.request.use(function (config) {

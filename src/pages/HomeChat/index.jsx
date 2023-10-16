@@ -6,7 +6,7 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
-import { getConversations } from "../../redux/action/message.js";
+import { addNewUser, getConversations } from "../../redux/action/message.js";
 import { callSearchUser } from '../../services/api';
 import { addUserToMessage } from '../../redux/features/messageSlice';
 import DisplayChat from '../../components/ContainerChat';
@@ -14,15 +14,18 @@ const HomeChat = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { user: { account }, message } = useSelector(state => state);
+    const { user: { account }, message, online } = useSelector(state => state);
     const refInputSeacrch = useRef('');
     const { t } = useTranslation("main");
     const [searchUsers, setSearchUsers] = useState([]);
 
     useEffect(() => {
-        if (message.firstLoad) return;
-        dispatch(getConversations());
-    }, [dispatch, message.firstLoad])
+        if (account) {
+            if (message.firstLoad) return;
+            dispatch(getConversations());
+        }
+
+    }, [dispatch, message.firstLoad, account])
 
     const handFindUser = async () => {
         let name = refInputSeacrch.current.value;
@@ -34,8 +37,7 @@ const HomeChat = () => {
     const handFetchUser = (user) => {
         setSearchUsers([])
         refInputSeacrch.current.value = "";
-        dispatch(addUserToMessage({ ...user, text: '', media: [] }));
-        // dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online })
+        dispatch(addNewUser({ ...user, text: '', media: [] }));
         navigate(`/chat/` + user._id);
     }
 
@@ -55,8 +57,9 @@ const HomeChat = () => {
                         </div>
                         <div className='lg:my-3 xs:mt-0  cursor-pointer'>
                             <div className='overflow-hidden px-4'>
+                                <div>{account?.name} / {account?._id}</div>
                                 <Row className=' w-full overflow-x-scroll  scrollX' wrap={false} justify="start" >
-                                    <Col xs={0} lg={8} xl={6} className='user_active'>
+                                    {/* <Col xs={0} lg={8} xl={6} className='user_active'>
                                         <Conversation isActive={true} />
                                     </Col>
                                     <Col xs={0} lg={8} xl={6} className='user_active'>
@@ -64,8 +67,7 @@ const HomeChat = () => {
                                     </Col>
                                     <Col xs={0} lg={8} xl={6} className='user_active'>
                                         <Conversation isActive={true} />
-                                    </Col>
-
+                                    </Col> */}
                                 </Row>
                             </div>
                             {
@@ -76,10 +78,12 @@ const HomeChat = () => {
                                         </div>
                                     )) :
                                     <>
-                                        {message.users && message.users.map(item => {
+                                        {account && message.users && message.users.map(item => {
+                                            let isOnline = online.includes(item?._id) ? true : false;
+
                                             return (
                                                 <div key={item?._id} className={`${item?._id == id && 'activeConversation'}`} onClick={() => handFetchUser(item)}>
-                                                    <Conversation dataFriend={item} row={true} />
+                                                    < Conversation dataFriend={item} row={true} isActive={isOnline} />
                                                 </div>
                                             )
                                         })}

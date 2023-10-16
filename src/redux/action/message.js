@@ -5,7 +5,7 @@ import { callAddMessage, callConversations, callMessage } from "../../services/a
 
 
 
-export const getConversations = createAsyncThunk('message/getConversations', async (page = 1, { getState }) => {
+export const getConversations = createAsyncThunk('message/getConversations', async (page = 1, { getState, rejectWithValue }) => {
     const { account: { _id } } = getState().user;
     const res = await callConversations({ limit: page * 9 });
     if (+res.result > 0) {
@@ -19,10 +19,9 @@ export const getConversations = createAsyncThunk('message/getConversations', asy
         })
         return { newArr, result: res.result }
     }
-    return null
+    return rejectWithValue()
 })
 export const addMessage = createAsyncThunk('message/add_message', async ({ data, method }, { getState }) => {
-
     if ("receive" === method) return data;
     const { user, message } = await callAddMessage(data);
     socket.emit('addMessage', { user, message });
@@ -30,10 +29,18 @@ export const addMessage = createAsyncThunk('message/add_message', async ({ data,
 })
 export const getMessage = createAsyncThunk('message/get_message', async ({ id, page = 1 }, { getState }) => {
     const res = await callMessage(id, { limit: page * 9 });
-    const newData = { ...res, messages: res.messages.reverse() }
+    const newData = { ...res, messages: res.messages.reverse() };
     return { ...newData, _id: id, page }
 })
 
+
+export const addNewUser = createAsyncThunk('message/addNewUser', async (data, { getState, rejectWithValue }) => {
+    const { users } = getState().message;
+    if (users.some(item => item._id === data._id)) {
+        return rejectWithValue()
+    }
+    return data
+})
 
 // export const getMessages = ({ auth, id, page = 1 }) => async (dispatch) => {
 //     try {

@@ -8,6 +8,9 @@ import { fetchAccount } from "../redux/action/user";
 import Spinner from "../components/Loading";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { updatePeer } from "../redux/features/callSlice";
+import { peer } from "../services/socketClient";
+
 export default function useRouteElements() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -21,8 +24,12 @@ export default function useRouteElements() {
         if (window.location.pathname !== "/login") {
             dispatch(fetchAccount());
         }
+
     }, []);
     useEffect(() => {
+        peer.on('open', (id) => {
+            dispatch(updatePeer(id))
+        });
         if (account == null || !isAuthenticated) {
             navigate('/login');
         }

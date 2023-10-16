@@ -13,19 +13,23 @@ import {
     REGISTER,
 } from 'redux-persist'
 import messageSlice from './features/messageSlice';
+import onlineSlice from './features/onlineSlice';
+import callSlice from './features/callSlice';
 
 
 
 const reducers = combineReducers({
     user: accountSlice,
-    message: messageSlice
+    message: messageSlice,
+    online: onlineSlice,
+    call: callSlice
 });
 
 const persistConfig = {
     key: "user",
     root: "root",
     storage,
-    blacklist: ['message']
+    blacklist: ['message', 'online', "call",]
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
@@ -37,7 +41,7 @@ const store = configureStore({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
             }
-        }),
+        })
 });
 const persistor = persistStore(store);
 export { store, persistor };

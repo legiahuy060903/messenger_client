@@ -1,6 +1,6 @@
 
 import { createSlice } from '@reduxjs/toolkit';
-import { getConversations, addMessage, getMessage } from '../action/message';
+import { getConversations, addMessage, getMessage, addNewUser } from '../action/message';
 const initialState = {
     users: [],
     resultUsers: 0,
@@ -13,17 +13,11 @@ const messageSlice = createSlice({
     initialState,
     reducers: {
         addUserToMessage: (state, action) => {
-            let users = state.users || [];
-            if (users.length === 0) {
-                state.users = [action.payload]
+            let isUserPresent = state.users.some(item => item._id === action.payload._id)
+            if (!isUserPresent) {
+                state.users = [action.payload, ...state.users];
             }
-            else {
-                let isUserPresent = users.some(item => item._id === action.payload._id);
-                if (!isUserPresent) {
-                    state.users = [action.payload, ...users];
-                }
-            }
-            return state;
+
         },
         resetMessages: () => {
             return initialState
@@ -32,12 +26,15 @@ const messageSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getConversations.fulfilled, (state, action) => {
-                state.users = action.payload?.newArr;
-                state.resultUsers = action.payload?.result;
-                state.firstLoad = true
+                return {
+                    ...state,
+                    users: action.payload?.newArr || [],
+                    resultUsers: action.payload?.result || 0,
+                    firstLoad: true
+                }
             })
             .addCase(addMessage.fulfilled, (state, action) => {
-                state.data = (state.data || []).map(item =>
+                state.data = state.data.map(item =>
                     item._id === action.payload.recipient || item._id === action.payload.sender
                         ? {
                             ...item,
@@ -46,7 +43,7 @@ const messageSlice = createSlice({
                         }
                         : item
                 );
-                state.users = (state.users || []).map(user =>
+                state.users = state.users.map(user =>
                     user._id === action.payload.recipient || user._id === action.payload.sender
                         ? {
                             ...user,
@@ -57,10 +54,13 @@ const messageSlice = createSlice({
                         }
                         : user
                 );
-                console.log(state.users)
             })
             .addCase(getMessage.fulfilled, (state, action) => {
-                state.data = [...state?.data, action.payload]
+                state.data = [...state?.data, action.payload];
+            })
+            .addCase(addNewUser.fulfilled, (state, action) => {
+                state.users = [action.payload, ...state?.users];
+                state.resultUsers += 1;
             })
     }
 });
